@@ -1,0 +1,44 @@
+CREATE DATABASE IF NOT EXISTS staynear;
+USE staynear;
+
+CREATE TABLE users (
+ id BIGINT AUTO_INCREMENT PRIMARY KEY,
+ name VARCHAR(100) NOT NULL,
+ email VARCHAR(100) NOT NULL UNIQUE,
+ phone_number VARCHAR(15),
+ gender ENUM('MALE','FEMALE','OTHER'),
+ user_type ENUM('OWNER','TENANT') NOT NULL,
+ password VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE companies (
+ id BIGINT AUTO_INCREMENT PRIMARY KEY,
+ name VARCHAR(150) NOT NULL,
+ address VARCHAR(255),
+ latitude DECIMAL(10,7) NULL,
+ longitude DECIMAL(10,7) NULL
+);
+
+CREATE TABLE properties (
+ id BIGINT AUTO_INCREMENT PRIMARY KEY,
+ owner_id BIGINT NOT NULL,
+ name VARCHAR(150) NOT NULL,
+ address VARCHAR(255),
+ rent DECIMAL(10,2) NOT NULL,
+ property_type VARCHAR(50) NOT NULL,
+ latitude DECIMAL(10,7) NOT NULL,
+ longitude DECIMAL(10,7) NOT NULL,
+ available BOOLEAN DEFAULT TRUE,
+ description TEXT,
+ FOREIGN KEY (owner_id) REFERENCES users(id)
+);
+
+CREATE TABLE property_companies (
+ id BIGINT AUTO_INCREMENT PRIMARY KEY,
+ property_id BIGINT NOT NULL,
+ company_id BIGINT NOT NULL,
+ distance_km DECIMAL(10,3) NULL,
+ FOREIGN KEY (property_id) REFERENCES properties(id) ON DELETE CASCADE,
+ FOREIGN KEY (company_id) REFERENCES companies(id) ON DELETE CASCADE,
+ UNIQUE(property_id, company_id)
+);
